@@ -1,0 +1,23 @@
+name: New attack sign
+description: A sign of a hijacked account that the guide misses, or a new attack wave
+labels: ["new sign"]
+body:
+  - type: textarea
+    id: sign
+    attributes:
+      label: The sign
+      description: What a victim would see in their account or repos, in plain words.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Public source
+      description: A write-up or advisory that describes it. Never paste your own logs, tokens or keys.
+    validations:
+      required: true
+  - type: textarea
+    id: check
+    attributes:
+      label: How to check for it (optional)
+      description: Where in GitHub's settings or a repo someone can look.

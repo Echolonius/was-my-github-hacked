@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: My account is hacked right now
+    url: https://support.github.com/contact
+    about: GitHub Support can act on your account. Follow the guide's first steps, then contact them. Don't post account details here.
+  - name: Report a harmful mistake in the guide privately
+    url: https://github.com/Echolonius/was-my-github-hacked/security/advisories/new
+    about: For advice that could cause harm or that an attacker could abuse.

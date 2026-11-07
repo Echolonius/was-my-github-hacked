@@ -1,0 +1,26 @@
+name: Correction
+description: A step, link or claim in the guide is wrong or out of date
+labels: ["correction"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: The section or step.
+      placeholder: "Step 3: sessions"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What's wrong
+      description: What it says now, and what it should say.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: A link to GitHub's docs or another source that shows the right answer.
+    validations:
+      required: true
