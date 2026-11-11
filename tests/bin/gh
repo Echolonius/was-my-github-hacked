@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+# A stand-in for the GitHub CLI, used by the tests only. It answers from the JSON files in
+# tests/fixtures and never touches the network. It refuses anything that is not a plain read,
+# so a test fails loudly if check.sh ever tries to change something.
+#
+# Scenario folder: tests/fixtures/$FAKE_GH_SCENARIO, then tests/fixtures/defaults.
+# A file ending .403 stands for "HTTP 403"; no file at all stands for "HTTP 404".
+# --jq is evaluated with the real jq.
+
+here=$(cd "$(dirname "$0")/.." && pwd)
+scn="$here/fixtures/${FAKE_GH_SCENARIO:-clean-quiet}"
+defaults="$here/fixtures/defaults"
+
+refuse() {
+  printf 'fake-gh: REFUSED: %s\n' "$1" >&2
+  [ -z "${FAKE_GH_LOG:-}" ] || printf 'REFUSED %s\n' "$1" >>"$FAKE_GH_LOG"
+  exit 97
+}
+
+case "${1:-}" in
+  --version)
+    printf 'gh version 0.0.0 (fake, for tests)\n'
+    exit 0
+    ;;
+  auth)
+    [ "${2:-}" = "status" ] || refuse "gh $*"
+    printf 'Logged in to github.com as octo-user (fake)\n'
+    exit 0
+    ;;
+  api) shift ;;
+  *) refuse "gh $*" ;;
+esac
+
+method=""
+path=""
+expr=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --method)
+      method=${2:-}
+      shift 2
+      ;;
+    -H)
+      shift 2
+      ;;
+    --paginate)
+      shift
+      ;;
+    --jq)
+      expr=${2:-}
+      shift 2
+      ;;
+    -*)
+      refuse "flag $1"
+      ;;
+    *)
+      [ -z "$path" ] || refuse "two paths: $path and $1"
+      path=$1
+      shift
+      ;;
+  esac
+done
+
+[ "$method" = "GET" ] || refuse "not a GET (method: '$method')"
+[ -n "$path" ] || refuse "no path"
+[ -z "${FAKE_GH_LOG:-}" ] || printf 'GET %s\n' "$path" >>"$FAKE_GH_LOG"
+
+# The start of the window is fixed, so the fixtures never go out of date.
+if [ "$path" = "rate_limit" ]; then
+  case "$expr" in
+    *todate*)
+      printf '2026-08-13T00:00:00Z\n'
+      exit 0
+      ;;
+  esac
+fi
+
+san() { printf '%s' "$1" | tr -c 'A-Za-z0-9._-' '_'; }
+
+noq=${path%%\?*}
+case "$noq" in
+  repos/*/*/*) rel=${noq#repos/*/*/} ;;
+  *) rel=$noq ;;
+esac
+
+file=""
+for cand in "$scn/$(san "$path")" "$scn/$(san "$noq")" "$scn/$(san "$rel")" "$defaults/$(san "$rel")"; do
+  if [ -f "$cand.403" ]; then
+    printf 'gh: Forbidden (HTTP 403)\n' >&2
+    exit 1
+  fi
+  if [ -f "$cand.json" ]; then
+    file="$cand.json"
+    break
+  fi
+done
+
+if [ -z "$file" ]; then
+  printf '{"message":"Not Found"}\n'
+  printf 'gh: Not Found (HTTP 404)\n' >&2
+  exit 1
+fi
+
+if [ -n "$expr" ]; then
+  jq -r "$expr" "$file"
+else
+  cat "$file"
+fi

@@ -1,0 +1,43 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            check_bash: bash
+          - os: macos-latest
+            # macOS still ships bash 3.2 as /bin/bash; check.sh must run on it.
+            check_bash: /bin/bash
+          - os: windows-latest
+            check_bash: bash
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: check.sh only reads (static test)
+        run: bash tests/static-readonly.sh check.sh
+      - name: Syntax check with the bash that will run it
+        run: ${{ matrix.check_bash }} -n check.sh
+      - name: shellcheck
+        if: runner.os == 'Linux'
+        run: shellcheck --severity=warning check.sh tests/run-tests.sh tests/static-readonly.sh tests/bin/gh
+      - name: Run check.sh against made-up accounts
+        env:
+          CHECK_BASH: ${{ matrix.check_bash }}
+        run: bash tests/run-tests.sh

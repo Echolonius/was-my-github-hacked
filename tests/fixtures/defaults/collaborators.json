@@ -1,0 +1,9 @@
+[
+  {
+    "login": "octo-user",
+    "permissions": {
+      "push": true,
+      "admin": true
+    }
+  }
+]
