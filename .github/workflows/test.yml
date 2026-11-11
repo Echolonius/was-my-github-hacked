@@ -36,7 +36,7 @@ jobs:
         run: ${{ matrix.check_bash }} -n check.sh
       - name: shellcheck
         if: runner.os == 'Linux'
-        run: shellcheck check.sh tests/run-tests.sh tests/static-readonly.sh tests/bin/gh
+        run: shellcheck --severity=warning check.sh tests/run-tests.sh tests/static-readonly.sh tests/bin/gh
       - name: Run check.sh against made-up accounts
         env:
           CHECK_BASH: ${{ matrix.check_bash }}

@@ -42,7 +42,7 @@ done
 #    (The help text says "bash check.sh"; those words are text, not a command.)
 code=$(printf '%s\n' "$code" | sed 's/bash check\.sh/check.sh/g')
 for word in 'eval' 'exec' 'source' 'curl' 'wget' 'ssh' 'scp' 'nc' 'telnet' 'command' 'env' 'xargs' 'bash' 'sh'; do
-  if printf '%s\n' "$code" | grep -q -E "(^|[;&|(\`[:space:]])$word[[:space:]]"; then
+  if printf '%s\n' "$code" | grep -q -E "(^|[;&|(\`[:space:]])${word}[[:space:]]"; then
     say "forbidden command found: $word"
   fi
 done

@@ -980,7 +980,7 @@ change_checks() {
     if [ "$need" -gt 0 ]; then
       # which job files are on the main branch right now? One listing answers it for all of them.
       if api "$TMP/ls" "repos/$R_SLUG/contents/.github/workflows" --jq "$JQ_LIB $JQ_FOLDER"; then
-        listing=read
+        listing="read"
       elif [ "$API_ERR" = "HTTP 404" ]; then
         listing=empty
       else
@@ -1157,7 +1157,7 @@ N_QUIET=0
 N_CUT=0
 : >"$TMP/info.repos"
 i=0
-while IFS="$US" read -r R_SLUG R_NAME _created _pushed R_KIND _arch _vis R_DEFAULT _desc R_CHANGED <&3; do
+while IFS="$US" read -r R_SLUG R_NAME _created _pushed _kind _arch _vis R_DEFAULT _desc R_CHANGED <&3; do
   i=$((i + 1))
   if [ "$RATE_STOP" -eq 1 ]; then
     N_CUT=$((N_CUT + 1))

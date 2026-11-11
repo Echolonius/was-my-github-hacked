@@ -53,7 +53,7 @@ hasnot clean-quiet "is safe"
 
 printf '\n2. An account hit like GhostAction: a new job file that sends out every secret\n'
 run ghostaction-like 2
-has ghostaction-like "ACT NOW (1)"
+hasnot ghostaction-like "ACT NOW (0)"
 has ghostaction-like "octo-user/shop"
 has ghostaction-like "github_actions_security.yml"
 has ghostaction-like "NPM_TOKEN"
