@@ -16,7 +16,8 @@ question to ask about everything you see.
 > below goes to github.com or docs.github.com.
 
 **Jump to:** [Someone is in my account right now](#someone-is-in-my-account-right-now) ·
-[The 15-minute check](#the-15-minute-check) · [What real attacks looked like](#what-real-attacks-looked-like) ·
+[The 15-minute check](#the-15-minute-check) · [Run the checker (beta)](#run-the-checker-beta) ·
+[What real attacks looked like](#what-real-attacks-looked-like) ·
 [I found something: what to do, in order](#i-found-something-what-to-do-in-order) ·
 [Keep it from happening again](#keep-it-from-happening-again)
 
@@ -126,6 +127,48 @@ for anything you didn't delete; in most cases you can restore those yourself for
 
 ---
 
+## Run the checker (beta)
+
+`check.sh` does Part B for you. It asks GitHub about every repository you own and prints a plain report: new
+automatic job files, changes to job files, rewritten history, webhooks, deploy keys, invitations, self-hosted
+runners, release files replaced after publishing, new repositories, repositories switched to public, and new keys.
+It takes a few minutes for a few dozen repositories.
+
+**It only reads.** One function in the script talks to GitHub, and it can only ask questions. A test in this
+repository fails if anything else in the script could reach GitHub, send data elsewhere or run text as code.
+It prints names and dates, never a secret's value, a key or a webhook's full address.
+
+**How to run it** (don't pipe a download into your shell, for this tool or any other):
+
+1. Install the [GitHub CLI](https://cli.github.com/) and sign in: `gh auth login`
+2. Get this repository: `git clone https://github.com/Echolonius/was-my-github-hacked`
+3. Open `check.sh` and skim it. It is one file, and its first lines say what it promises.
+4. Run it: `cd was-my-github-hacked` and then `bash check.sh` (on Windows, in Git Bash)
+
+**Reading the report**
+
+| Level | Meaning |
+|---|---|
+| ACT NOW | A pattern that is rarely innocent, such as a job file that sends out every secret at once. Follow [what to do, in order](#i-found-something-what-to-do-in-order). |
+| CHECK THIS | Something changed in the last 90 days. **Did you do it?** If you did, it's fine. If not, treat it as ACT NOW. An active account will have several of these. |
+| FOR YOUR INFORMATION | Things worth knowing that are probably fine, such as who can push to a repository. |
+| COULD NOT CHECK | GitHub refused or didn't answer. That is not a pass: check it by hand. |
+
+Options: `--days N` (how far back, default 90), `--repo OWNER/NAME` (only that repository), `--no-forks`,
+`--max-repos N`, `--help`.
+
+**What it can't see.** Your security log, sessions, tokens and apps: do [Part A](#part-a-your-account-about-5-minutes)
+by hand. Someone who only read or copied your code. Job runs and branches an attacker deleted long ago. Anything
+older than the window. Repositories that belong to an organization. So **a clean report is not proof that your
+account is clean**, and the report says so itself.
+
+The report can name your private repositories, so don't paste it in public. This is a beta: if it flags something
+wrongly or misses something, please
+[tell us](https://github.com/Echolonius/was-my-github-hacked/issues/new?template=correction.yml) (without pasting
+your report).
+
+---
+
 ## What real attacks looked like
 
 The names change every time. The pattern doesn't: **new automatic-job files, branches, repositories, keys or
@@ -211,8 +254,8 @@ into a public place. If a computer might be infected, clean it before you make n
   [tell us](https://github.com/Echolonius/was-my-github-hacked/issues/new?template=correction.yml).
 - **Seen a sign this guide misses?** [Add it](https://github.com/Echolonius/was-my-github-hacked/issues/new?template=new-sign.yml),
   with a public source. Never post your own logs, tokens or keys.
-- **Next:** a small read-only checker that runs the repository checks for you. Watch this repository to hear when
-  it's ready.
+- **The checker is new (beta).** [`check.sh`](#run-the-checker-beta) was tested against made-up accounts on Linux,
+  macOS and Windows, and on one real account.
 - Not affiliated with GitHub. This is a checklist, not a replacement for [GitHub Support](https://support.github.com/).
 - Written with AI help (Claude Code) under the direction of [Echolonius](https://github.com/Echolonius), and
   checked line by line against the sources below.

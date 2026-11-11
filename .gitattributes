@@ -1,0 +1,5 @@
+# Shell scripts and test data must keep Unix line endings on every system.
+*.sh text eol=lf
+tests/bin/gh text eol=lf
+tests/fixtures/** text eol=lf
+known-bad.txt text eol=lf

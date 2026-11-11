@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "active": true,
+    "created_at": "2026-10-08T03:13:00Z",
+    "updated_at": "2026-10-08T03:13:00Z",
+    "config": {
+      "url": "https://hooks.attacker.example/secret-path?token=ghp_ThisValueMustNeverBePrinted",
+      "content_type": "json"
+    }
+  }
+]

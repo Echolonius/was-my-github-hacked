@@ -1,0 +1,16 @@
+# Names used in past attacks on GitHub accounts, from public write-ups.
+#
+# check.sh never finds anything by these names alone. They can only RAISE a finding the checks
+# already made (a new or changed job file, a new repository, a self-hosted runner) to ACT NOW.
+# This file ships with the tool and is never fetched from anywhere.
+#
+# Format: kind | text to look for (any letter case) | what it was used in
+# Kinds:  workflow (a job file's path)   message (a commit message)
+#         repo (a repository's name or description)   runner (a self-hosted runner's name)
+
+workflow | github_actions_security.yml           | the GhostAction attacks (2025 and 2026)
+message  | add github actions security workflow  | the GhostAction attacks (2025 and 2026)
+workflow | sync-check.yml                        | the Gheist attack (October 2026)
+message  | ci: sync config                       | the Gheist attack (October 2026)
+repo     | shai-hulud                            | the Shai-Hulud attacks (2025)
+runner   | sha1hulud                             | the Shai-Hulud attacks (2025)
